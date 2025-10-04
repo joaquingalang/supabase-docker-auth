@@ -35,7 +35,7 @@ export const validateName = (name) => {
  * @param {string} defaultValue - Default placeholder value to check against
  * @returns {boolean} - True if valid role is selected
  */
-export const validateRole = (role, defaultValue = 'Role') => {
+export const validateRole = (role, defaultValue = "Role") => {
   return role && role !== defaultValue && role.trim().length > 0;
 };
 
@@ -48,13 +48,13 @@ export const validateLoginForm = ({ email, password }) => {
   const errors = {};
 
   if (!email || !email.trim()) {
-    errors.email = 'Email is required';
+    errors.email = "Email is required";
   } else if (!validateEmail(email)) {
-    errors.email = 'Please enter a valid email address';
+    errors.email = "Please enter a valid email address";
   }
 
   if (!password) {
-    errors.password = 'Password is required';
+    errors.password = "Password is required";
   }
 
   return errors;
@@ -65,23 +65,37 @@ export const validateLoginForm = ({ email, password }) => {
  * @param {Object} formData - Object containing fullName, email, password, and role
  * @returns {Object} - Object containing any validation errors
  */
-export const validateSignupForm = ({ fullName, email, password }) => {
+/**
+ * Validates signup form data
+ * @param {Object} formData - Object containing firstName, lastName, email, and password
+ * @returns {Object} - Object containing any validation errors
+ */
+export const validateSignupForm = ({
+  firstName,
+  lastName,
+  email,
+  password,
+}) => {
   const errors = {};
 
-  if (!validateName(fullName)) {
-    errors.fullName = 'Full name is required';
+  if (!validateName(firstName)) {
+    errors.firstName = "First name is required";
+  }
+
+  if (!validateName(lastName)) {
+    errors.lastName = "Last name is required";
   }
 
   if (!email || !email.trim()) {
-    errors.email = 'Email is required';
+    errors.email = "Email is required";
   } else if (!validateEmail(email)) {
-    errors.email = 'Please enter a valid email address';
+    errors.email = "Please enter a valid email address";
   }
 
   if (!password) {
-    errors.password = 'Password is required';
+    errors.password = "Password is required";
   } else if (!validatePassword(password)) {
-    errors.password = 'Password must be at least 6 characters long';
+    errors.password = "Password must be at least 6 characters long";
   }
 
   return errors;
