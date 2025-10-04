@@ -1,7 +1,74 @@
 import FormInput from "../components/FormInput";
 import GradientBackground from "../components/GradientBackground";
+import { useNavigate } from "react-router-dom";
+import { validateSignupForm } from "../components/Validation";
 
 function SignUpPage() {
+    // const [firstName, setFirstName] = useState('');
+    // const [lastName, setLastName] = useState('');
+    // const [email, setEmail] = useState('');
+    // const [password, setPassword] = useState('');
+    // const [errors, setErrors] = useState({});
+    // const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+
+    // const validateForm = () => {
+    //     const formErrors = validateSignupForm({ firstName, lastName, email, password });
+    //     setErrors(formErrors);
+    //     return Object.keys(formErrors).length === 0;
+    // };
+
+    // const handleSignup = async (e) => {
+    //     e.preventDefault();
+    //     setErrors({});
+    //     if (!validateForm()) return;
+
+    // setIsLoading(true);
+
+    // try{
+    //     //EDIT HERE WHEN CONNECTING TO SUPABASE
+    //     const {data, error} = await supabase.auth.signUp({
+    //         email,
+    //         password,
+    //         //OTHER TABLES DATA
+    //         options: {
+    //             data: {
+    //                 first_name: firstName,
+    //                 last_name: lastName,
+    //                 address: '',
+    //                 position: ''}
+    //             }
+    //     });
+
+    //     if(error){
+    //         setErrors({submit: error.message});
+    //         return; 
+    //     }
+
+    //     //LOGIN AFTER SIGNUP
+    //     const{error: loginError} = await supabase.auth.signInWithPassword({
+    //         email,
+    //         password,
+    //     });
+
+    //     if(loginError){
+    //         setErrors({submit: loginError.message});
+    //         return;
+    //     }
+
+    //     //REDIRECT TO PROFILE PAGE
+    //     navigate('/profile');
+    // }
+
+    // catch(error){
+    //     setErrors({submit: 'An unexpected error occurred. Please try again.'});
+    //     console.error('Unexpected error:', error);
+    // }
+    // finally{
+    //     setIsLoading(false);
+    // }
+    // };
+
     return (
         <GradientBackground>
             <div className="w-full h-screen flex justify-center items-center">
@@ -34,7 +101,7 @@ function SignUpPage() {
 
                         </form>
 
-                        <p className="self-center text-[#715D6D] italic mb-7">Already have an account? <span className="text-[#FF97E0] font-semibold not-italic cursor-pointer">Log in</span></p>
+                        <p className="self-center text-[#715D6D] italic mb-7">Already have an account? <span className="text-[#FF97E0] font-semibold not-italic cursor-pointer" onclick={() => navigate('./signinpage')}>Log in</span></p>
 
                     </div>
 
