@@ -6,7 +6,7 @@ function SignUpPage() {
         <GradientBackground>
             <div className="w-full h-screen flex justify-center items-center">
 
-                <div className="w-[434px] h-[465px] bg-[#211A20] rounded-lg m-10">
+                <div className="w-[450px] h-[480px] bg-[#211A20] shadow-neomorphic-dark rounded-lg m-10">
 
                     <div className="h-full flex flex-col justify-between">
 
@@ -30,11 +30,11 @@ function SignUpPage() {
 
                             <br/>
 
-                            <input type="submit" value="Sign Up" className="bg-[#FF97E0] w-[229px] h-[56px] rounded-full font-poppins text-base font-medium mt-4"/>
+                            <input type="submit" value="Sign Up" className="bg-[#FF97E0] w-[229px] h-[56px] rounded-full font-poppins text-base font-medium mt-4 cursor-pointer"/>
 
                         </form>
 
-                        <p className="self-center text-[#715D6D] italic mb-5">Already have an account? <span className="text-[#FF97E0] font-semibold not-italic">Log in</span></p>
+                        <p className="self-center text-[#715D6D] italic mb-7">Already have an account? <span className="text-[#FF97E0] font-semibold not-italic cursor-pointer">Log in</span></p>
 
                     </div>
 

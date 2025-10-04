@@ -10,9 +10,9 @@ function ProfilePage() {
                 
                 <SideBar></SideBar>
 
-                <div className="col-span-10 bg-[#211A20] grid grid-cols-12">
+                <div className="col-span-10 bg-[#211A20] grid grid-cols-12 shadow-neomorphic-dark rounded-lg">
 
-                    <div className="col-span-3 border border-white flex flex-col justify-center items-center">
+                    <div className="col-span-3 flex flex-col justify-center items-center">
 
                         <div className="w-[200px] h-[200px] border-2 border-white rounded-full mb-5"></div>
 
@@ -26,13 +26,13 @@ function ProfilePage() {
 
                         <div className="h-[96px]"></div>
 
-                        <img src={EditIcon} className="w-8"/>
+                        <img src={EditIcon} className="w-8 cursor-pointer"/>
 
                     </div>
 
-                    <div className="col-span-9">
+                    <div className="col-span-9 flex justify-center items-center">
 
-                        <div className="my-[73px] mr-10 border-2 border-white">
+                        <div className="w-full my-[73px] mr-10 py-5 shadow-neomorphic-dark rounded-xl">
 
                             <div className="mx-[36px] my-[28px]">
                                 <p className="font-poppins text-6xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#FF97E0] via-[#969696] to-[#7C7C7C] mb-4">Juan Dela Cruz</p>
@@ -66,7 +66,7 @@ function ProfilePage() {
                                 </div>
 
                                 <div className="w-full h-[80px] flex justify-end">
-                                    <img src={DeleteIcon} className="self-end w-10"/>
+                                    <img src={DeleteIcon} className="self-end w-10 cursor-pointer"/>
                                 </div>
 
                             </div>
