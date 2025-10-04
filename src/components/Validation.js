@@ -65,11 +65,20 @@ export const validateLoginForm = ({ email, password }) => {
  * @param {Object} formData - Object containing fullName, email, password, and role
  * @returns {Object} - Object containing any validation errors
  */
-export const validateSignupForm = ({ fullName, email, password }) => {
+/**
+ * Validates signup form data
+ * @param {Object} formData - Object containing firstName, lastName, email, and password
+ * @returns {Object} - Object containing any validation errors
+ */
+export const validateSignupForm = ({ firstName, lastName, email, password }) => {
   const errors = {};
 
-  if (!validateName(fullName)) {
-    errors.fullName = 'Full name is required';
+  if (!validateName(firstName)) {
+    errors.firstName = 'First name is required';
+  }
+
+  if (!validateName(lastName)) {
+    errors.lastName = 'Last name is required';
   }
 
   if (!email || !email.trim()) {
