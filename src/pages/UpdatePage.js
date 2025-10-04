@@ -5,9 +5,9 @@ import CheckIcon from "../assets/check_icon.svg";
 import CloseIcon from "../assets/close_icon.svg";
 import DeleteIcon from "../assets/delete_icon.svg";
 import UpdateInput from "../components/UpdateInput";
+import DeleteModal from "../components/DeleteModal";
 
 function UpdatePage() {
-  // Form state
   const [formData, setFormData] = useState({
     firstName: "Juan",
     lastName: "Dela Cruz",
@@ -16,9 +16,16 @@ function UpdatePage() {
     position: "Software Engineer",
   });
 
-  // Update handler
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const handleChange = (field) => (e) => {
     setFormData({ ...formData, [field]: e.target.value });
+  };
+
+  const handleDelete = () => {
+    // Add actual delete logic here (e.g., API call)
+    console.log("Account deleted");
+    setShowDeleteModal(false);
   };
 
   return (
@@ -26,7 +33,7 @@ function UpdatePage() {
       <div className="w-full h-screen grid grid-cols-12">
         <SideBar />
 
-        <div className="col-span-10 bg-[#211A20] grid grid-cols-12 shadow-neomorphic-dark rounded-lg">
+        <div className="col-span-10 bg-[#211A20] grid grid-cols-12 shadow-neomorphic-dark rounded-lg relative">
           {/* LEFT PROFILE SECTION */}
           <div className="col-span-3 flex flex-col justify-center items-center">
             <div className="w-[200px] h-[200px] border-2 border-white rounded-full mb-5"></div>
@@ -116,15 +123,25 @@ function UpdatePage() {
                   />
                 </div>
 
+                {/* Delete Icon */}
                 <div className="w-full h-[80px] flex justify-end">
                   <img
                     src={DeleteIcon}
                     className="self-end w-10 cursor-pointer"
+                    onClick={() => setShowDeleteModal(true)}
                   />
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Delete Confirmation Modal */}
+          {showDeleteModal && (
+            <DeleteModal
+              onClose={() => setShowDeleteModal(false)}
+              onConfirm={handleDelete}
+            />
+          )}
         </div>
       </div>
     </GradientBackground>

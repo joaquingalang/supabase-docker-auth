@@ -5,7 +5,7 @@ import UpdatePage from './pages/UpdatePage';
 
 function App() {
   return (
-    <UpdatePage/>
+    <ProfilePage/>
   );
 }
 

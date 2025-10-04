@@ -1,19 +1,34 @@
+import { useState } from "react";
 import GradientBackground from "../components/GradientBackground";
 import SideBar from "../components/SideBar";
 import EditIcon from "../assets/edit_icon.svg";
 import DeleteIcon from "../assets/delete_icon.svg";
+import DeleteModal from "../components/DeleteModal"; // ← Import your modal
 
 function ProfilePage() {
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const handleDeleteClick = () => {
+        setShowDeleteModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowDeleteModal(false);
+    };
+
+    const handleConfirmDelete = () => {
+        // TODO: Add your account deletion logic here
+        console.log("Account deleted.");
+        setShowDeleteModal(false);
+    };
+
     return (
         <GradientBackground>
             <div className="w-full h-screen grid grid-cols-12">
-                
-                <SideBar></SideBar>
+                <SideBar />
 
                 <div className="col-span-10 bg-[#211A20] grid grid-cols-12 shadow-neomorphic-dark rounded-lg">
-
                     <div className="col-span-3 flex flex-col justify-center items-center">
-
                         <div className="w-[200px] h-[200px] border-2 border-white rounded-full mb-5"></div>
 
                         <p className="font-poppins text-3xl text-white font-medium">Juan Dela Cruz</p>
@@ -21,63 +36,60 @@ function ProfilePage() {
                         <div className="w-[80%] h-[1px] bg-white mt-[11px] mb-[21px]"></div>
 
                         <p className="font-poppins font-extralight text-white text-lg mb-2">Software Engineer</p>
-
                         <p className="font-poppins font-extralight text-white text-lg">San Francisco, CA</p>
 
                         <div className="h-[96px]"></div>
 
-                        <img src={EditIcon} className="w-8 cursor-pointer"/>
-
+                        <img src={EditIcon} className="w-8 cursor-pointer" />
                     </div>
 
                     <div className="col-span-9 flex justify-center items-center">
-
                         <div className="w-full my-[73px] mr-10 py-5 shadow-neomorphic-dark rounded-xl">
-
                             <div className="mx-[36px] my-[28px]">
-                                <p className="font-poppins text-6xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#FF97E0] via-[#969696] to-[#7C7C7C] mb-4">Juan Dela Cruz</p>
+                                <p className="font-poppins text-6xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#FF97E0] via-[#969696] to-[#7C7C7C] mb-4">
+                                    Juan Dela Cruz
+                                </p>
                                 <p className="font-poppins font-extralight text-white text-lg mb-1">Software Engineer</p>
                                 <p className="font-poppins font-extralight text-white text-lg mb-1">San Francisco, CA</p>
 
                                 <div className="h-[100px]"></div>
 
                                 <div className="grid grid-cols-10 gap-5">
-
                                     <p className="col-span-2 font-poppins font-semibold text-[#FF97E0] text-lg">First Name:</p>
-
                                     <p className="col-span-8 font-poppins font-extralight text-white text-lg">Juan</p>
 
                                     <p className="col-span-2 font-poppins font-semibold text-[#FF97E0] text-lg">Last Name:</p>
-
                                     <p className="col-span-8 font-poppins font-extralight text-white text-lg">Dela Cruz</p>
 
                                     <p className="col-span-2 font-poppins font-semibold text-[#FF97E0] text-lg">Email:</p>
-
                                     <p className="col-span-8 font-poppins font-extralight text-white text-lg">jdelacruz@gmail.com</p>
 
                                     <p className="col-span-2 font-poppins font-semibold text-[#FF97E0] text-lg">Address:</p>
-
                                     <p className="col-span-8 font-poppins font-extralight text-white text-lg">San Francisco, CA</p>
 
                                     <p className="col-span-2 font-poppins font-semibold text-[#FF97E0] text-lg">Position:</p>
-
-                                    <p className="col-span-8 font-poppins font-extralight text-white text-lg">Software Engineer</p>                                    
-
+                                    <p className="col-span-8 font-poppins font-extralight text-white text-lg">Software Engineer</p>
                                 </div>
 
                                 <div className="w-full h-[80px] flex justify-end">
-                                    <img src={DeleteIcon} className="self-end w-10 cursor-pointer"/>
+                                    <img
+                                        src={DeleteIcon}
+                                        onClick={handleDeleteClick}
+                                        className="self-end w-10 cursor-pointer hover:opacity-80 transition"
+                                    />
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
 
-                
+                {/* Delete Modal */}
+                {showDeleteModal && (
+                    <DeleteModal
+                        onClose={handleCloseModal}
+                        onConfirm={handleConfirmDelete}
+                    />
+                )}
             </div>
         </GradientBackground>
     );
