@@ -11,7 +11,6 @@ function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Simple validation for signin (email required and format, password required and min length)
   const validateSignInForm = ({ email, password }) => {
     const formErrors = {};
 
@@ -39,7 +38,7 @@ function SignInPage() {
   const handleSignIn = async (e) => {
     e.preventDefault();
     setErrors({});
-    if (!validateForm()) return; // Show field-specific errors if invalid
+    if (!validateForm()) return;
 
     setIsLoading(true);
 
@@ -50,15 +49,12 @@ function SignInPage() {
       });
 
       if (error) {
-        // Supabase handles validation against auth.users internally
-        // Common errors: "Invalid login credentials", "Email not confirmed", etc.
         setErrors({ submit: error.message });
         return;
       }
 
       if (data.user) {
         console.log("User  logged in successfully! ID:", data.user.id);
-        // Supabase sets the session automatically; redirect to profile
         navigate("/profile");
       } else {
         setErrors({ submit: "Login failed. Please try again." });

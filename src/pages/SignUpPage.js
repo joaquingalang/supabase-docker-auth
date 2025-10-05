@@ -30,7 +30,6 @@ function SignUpPage() {
       password,
     });
 
-    // Temporary debugging: Log the errors returned
     console.log("Validation errors:", formErrors);
 
     setErrors(formErrors);
@@ -40,7 +39,7 @@ function SignUpPage() {
   const handleSignup = async (e) => {
     e.preventDefault();
     
-    // Temporary debugging: Log states before validation
+
     console.log("Form states before validation:", {
       firstName,
       lastName,
@@ -49,7 +48,7 @@ function SignUpPage() {
     });
 
     setErrors({});
-    if (!validateForm()) return; // If validation fails, return early to show field-specific errors
+    if (!validateForm()) return;
 
     setIsLoading(true);
 
@@ -72,11 +71,9 @@ function SignUpPage() {
         return;
       }
 
-      // Signup successful. Redirect to /signin after a brief delay
-      // (Assumes email confirmation is enabled; adjust if disabled)
       setTimeout(() => {
         navigate("/signin");
-      }, 1500); // Short delay to allow submission feedback
+      }, 1500); 
     } catch (error) {
       console.error("Unexpected error:", error);
       setErrors({ submit: "An unexpected error occurred. Please try again." });
