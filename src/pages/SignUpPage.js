@@ -27,13 +27,15 @@ function SignUpPage() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    console.log("✅ handleSignup called"); // <---- Add this line
     setErrors({});
     if (!validateForm()) return;
-
+  
     setIsLoading(true);
-
+  
     try {
-      const { error } = await supabase.auth.signUp({
+      // ✅ Step 1: Create the user
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -45,13 +47,29 @@ function SignUpPage() {
           },
         },
       });
-
-      if (error) {
-        setErrors({ submit: error.message });
+  
+      console.log("Signup response:", data, signUpError);
+  
+      if (signUpError) {
+        setErrors({ submit: signUpError.message });
         return;
       }
-
-      // If email verification is off, user is logged in immediately
+  
+      // ✅ Step 2: Immediately log in (if email confirmation is disabled)
+      const { data: loginData, error: loginError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+  
+      console.log("Login response:", loginData, loginError);
+  
+      if (loginError) {
+        setErrors({ submit: loginError.message });
+        return;
+      }
+  
+      // ✅ Step 3: Redirect to profile
       navigate("/profile");
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -60,6 +78,7 @@ function SignUpPage() {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <GradientBackground>
