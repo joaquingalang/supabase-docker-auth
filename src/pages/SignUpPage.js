@@ -15,27 +15,46 @@ function SignUpPage() {
   const navigate = useNavigate();
 
   const validateForm = () => {
+    // Temporary debugging: Log the values being validated
+    console.log("Validating form with values:", {
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+
     const formErrors = validateSignupForm({
       firstName,
       lastName,
       email,
       password,
     });
+
+    // Temporary debugging: Log the errors returned
+    console.log("Validation errors:", formErrors);
+
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("✅ handleSignup called"); // <---- Add this line
+    
+    // Temporary debugging: Log states before validation
+    console.log("Form states before validation:", {
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+
     setErrors({});
-    if (!validateForm()) return;
-  
+    if (!validateForm()) return; // If validation fails, return early to show field-specific errors
+
     setIsLoading(true);
-  
+
     try {
-      // ✅ Step 1: Create the user
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -47,30 +66,17 @@ function SignUpPage() {
           },
         },
       });
-  
-      console.log("Signup response:", data, signUpError);
-  
-      if (signUpError) {
-        setErrors({ submit: signUpError.message });
+
+      if (error) {
+        setErrors({ submit: error.message });
         return;
       }
-  
-      // ✅ Step 2: Immediately log in (if email confirmation is disabled)
-      const { data: loginData, error: loginError } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-  
-      console.log("Login response:", loginData, loginError);
-  
-      if (loginError) {
-        setErrors({ submit: loginError.message });
-        return;
-      }
-  
-      // ✅ Step 3: Redirect to profile
-      navigate("/profile");
+
+      // Signup successful. Redirect to /signin after a brief delay
+      // (Assumes email confirmation is enabled; adjust if disabled)
+      setTimeout(() => {
+        navigate("/signin");
+      }, 1500); // Short delay to allow submission feedback
     } catch (error) {
       console.error("Unexpected error:", error);
       setErrors({ submit: "An unexpected error occurred. Please try again." });
@@ -78,7 +84,31 @@ function SignUpPage() {
       setIsLoading(false);
     }
   };
-  
+
+  // Temporary debugging: Log state changes on input
+  const handleFirstNameChange = (e) => {
+    const value = e.target.value;
+    console.log("First name changed to:", value);
+    setFirstName(value);
+  };
+
+  const handleLastNameChange = (e) => {
+    const value = e.target.value;
+    console.log("Last name changed to:", value);
+    setLastName(value);
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    console.log("Email changed to:", value);
+    setEmail(value);
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    console.log("Password changed to:", value.length, "characters");
+    setPassword(value);
+  };
 
   return (
     <GradientBackground>
@@ -99,31 +129,43 @@ function SignUpPage() {
               <FormInput
                 placeholder="Enter your first name"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={handleFirstNameChange}
               />
+              {errors.firstName && (
+                <p className="text-red-400 text-sm mb-3">{errors.firstName}</p>
+              )}
               <br />
 
               <FormInput
                 placeholder="Enter your last name"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={handleLastNameChange}
               />
+              {errors.lastName && (
+                <p className="text-red-400 text-sm mb-3">{errors.lastName}</p>
+              )}
               <br />
 
               <FormInput
                 type="email"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
               />
+              {errors.email && (
+                <p className="text-red-400 text-sm mb-3">{errors.email}</p>
+              )}
               <br />
 
               <FormInput
                 type="password"
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
               />
+              {errors.password && (
+                <p className="text-red-400 text-sm mb-3">{errors.password}</p>
+              )}
               <br />
 
               {errors.submit && (
