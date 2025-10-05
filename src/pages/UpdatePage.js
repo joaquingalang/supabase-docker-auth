@@ -15,19 +15,18 @@ function UpdatePage() {
     lastName: "",
     email: "",
     address: "",
-    position: "",
-    id: "", // New: Store user ID for backend deletion
+    job_position: "",
+    id: "", 
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // New: For logout confirmation
+  const [showLogoutModal, setShowLogoutModal] = useState(false); 
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch current user data from Supabase auth.users on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser  ();
+        const { data: { user }, error } = await supabase.auth.getUser ();
 
         if (error || !user) {
           console.error("No user session found. Redirecting to signin.");
@@ -35,7 +34,6 @@ function UpdatePage() {
           return;
         }
 
-        // Extract data from auth.users 
         const metadata = user.user_metadata || {};
         const newFormData = {
           id: user.id, 
@@ -43,11 +41,11 @@ function UpdatePage() {
           lastName: metadata.last_name || "",
           email: user.email || "",
           address: metadata.address || "",
-          position: metadata.position || "",
+          job_position: metadata.job_position || "",
         };
         setFormData(newFormData);
 
-        console.log("User   data fetched for update:", newFormData);
+        console.log("User  data fetched for update:", newFormData);
       } catch (error) {
         console.error("Error fetching user data:", error);
         navigate("/signin");
@@ -64,33 +62,58 @@ function UpdatePage() {
   };
 
   const handleCheck = async () => {
+    if (!formData.id) {
+      alert("Error: No user ID found. Please refresh and try again.");
+      return;
+    }
+
     try {
-      // Update user_metadata and email if changed 
+      setIsLoading(true); 
       const updateData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
         address: formData.address,
-        position: formData.position,
+        job_position: formData.job_position,
       };
 
-      const { data: { user: currentUser  } } = await supabase.auth.getUser  (); 
+      const { data: { user: currentUser  } } = await supabase.auth.getUser (); 
       if (formData.email && formData.email !== currentUser ?.email) {
         updateData.email = formData.email;
       }
 
-      const { error } = await supabase.auth.updateUser  ({ data: updateData });
+      const { error: authError } = await supabase.auth.updateUser ({ data: updateData });
 
-      if (error) {
-        console.error("Error updating user data:", error);
-        alert("Update failed. Please try again."); 
+      if (authError) {
+        console.error("Error updating auth.users metadata:", authError);
+        alert("Auth update failed. Please try again.");
         return;
       }
 
-      console.log("User   data updated successfully");
+
+      const profileData = {
+        id: formData.id,  
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        address: formData.address,
+        job_position: formData.job_position,
+      };
+
+      const { error: publicError } = await supabase
+        .from('users')
+        .upsert(profileData);  
+      if (publicError) {
+        console.error("Error upserting public.users profile:", publicError);
+        alert(`Profile update failed: ${publicError.message || 'Please check permissions.'}`);
+        return;
+      }
+
+      console.log("User  data updated successfully in auth.users and public.users");
       navigate("/profile"); 
     } catch (error) {
       console.error("Unexpected error during update:", error);
       alert("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,7 +125,6 @@ function UpdatePage() {
     console.log("Logout triggered from sidebar!");
     setShowLogoutModal(true);
   };
-
 
   const handleCloseLogoutModal = () => {
     console.log("Logout modal closed.");
@@ -120,7 +142,7 @@ function UpdatePage() {
         return;
       } 
 
-      console.log("User signed out successfully.");
+      console.log("User  signed out successfully.");
       navigate("/signin"); 
     } catch (error) {
       console.error("Unexpected error during logout:", error);
@@ -145,15 +167,16 @@ function UpdatePage() {
         headers: { 
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: formData.id }), 
+        body: JSON.stringify({ userId: formData.id }), // Send current user's ID
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Profile/account deleted successfully from auth.users and public.users");
-        alert("Profile deleted successfully. Signing out...");
+        console.log("Account deleted successfully from auth.users and public.users");
+        alert("Account deleted successfully. Signing out...");
         
+
         const { error: signOutError } = await supabase.auth.signOut();
         if (signOutError) {
           console.error("Error signing out after deletion:", signOutError);
@@ -161,7 +184,7 @@ function UpdatePage() {
         navigate("/signin");
       } else {
         console.error("Deletion failed:", data.error);
-        alert(`Error: ${data.error || 'Failed to delete profile. Please try again.'}`);
+        alert(`Error: ${data.error || 'Failed to delete account. Please try again.'}`);
       }
     } catch (error) {
       console.error("Network error during deletion:", error);
@@ -176,7 +199,7 @@ function UpdatePage() {
     return (
       <GradientBackground>
         <div className="w-full h-screen grid grid-cols-12">
-          <SideBar onLogout={handleLogoutClick} /> {/* New: Pass onLogout for sidebar during loading */}
+          <SideBar onLogout={handleLogoutClick} /> {/* Pass onLogout for sidebar during loading */}
           <div className="col-span-10 bg-[#211A20] grid grid-cols-12 shadow-neomorphic-dark rounded-lg">
             <div className="col-span-12 flex justify-center items-center h-full">
               <p className="text-white">Loading update form...</p>
@@ -190,7 +213,7 @@ function UpdatePage() {
   return (
     <GradientBackground>
       <div className="w-full h-screen grid grid-cols-12">
-        <SideBar onLogout={handleLogoutClick} /> {/* New: Pass onLogout for sidebar */}
+        <SideBar onLogout={handleLogoutClick} /> {/* Pass onLogout for sidebar */}
 
         <div className="col-span-10 bg-[#211A20] grid grid-cols-12 shadow-neomorphic-dark rounded-lg relative">
           {/* LEFT PROFILE SECTION */}
@@ -204,7 +227,7 @@ function UpdatePage() {
             <div className="w-[80%] h-[1px] bg-white mt-[11px] mb-[21px]"></div>
 
             <p className="font-poppins font-extralight text-white text-lg mb-2">
-              {formData.position}
+              {formData.job_position}
             </p>
             <p className="font-poppins font-extralight text-white text-lg">
               {formData.address}
@@ -236,7 +259,7 @@ function UpdatePage() {
                   {formData.firstName} {formData.lastName}
                 </p>
                 <p className="font-poppins font-extralight text-white text-lg mb-1">
-                  {formData.position}
+                  {formData.job_position}
                 </p>
                 <p className="font-poppins font-extralight text-white text-lg mb-1">
                   {formData.address}
@@ -296,19 +319,19 @@ function UpdatePage() {
                   <div className="col-span-8">
                     <UpdateInput
                       placeholder="Enter position"
-                      value={formData.position}
-                      onChange={handleChange("position")}
+                      value={formData.job_position}
+                      onChange={handleChange("job_position")}
                     />
                   </div>
                 </div>
 
-                {/* Delete Icon (for delete profile/account) */}
+                {/* Delete Icon (for full account deletion) */}
                 <div className="w-full h-[80px] flex justify-end">
                   <img
                     src={DeleteIcon}
                     className="self-end w-10 cursor-pointer hover:opacity-80 transition"
                     onClick={() => setShowDeleteModal(true)}
-                    alt="Delete Profile"
+                    alt="Delete Account"
                   />
                 </div>
               </div>
@@ -317,7 +340,7 @@ function UpdatePage() {
         </div>
       </div>
 
-      {/* New: Logout Confirmation Modal (outside grid for proper overlay) */}
+      {/* Logout Confirmation Modal (outside grid for proper overlay) */}
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-[#211A20] p-6 rounded-lg shadow-neomorphic-dark max-w-md w-full mx-4">
@@ -343,7 +366,7 @@ function UpdatePage() {
         </div>
       )}
 
-      {/* Fixed: Delete Confirmation Modal (moved outside grid for proper overlay) */}
+      {/* Delete Confirmation Modal (outside grid for proper overlay) */}
       {showDeleteModal && (
         <DeleteModal
           onClose={() => setShowDeleteModal(false)}

@@ -4,12 +4,12 @@ import GradientBackground from "../components/GradientBackground";
 import SideBar from "../components/SideBar";
 import EditIcon from "../assets/edit_icon.svg";
 import DeleteIcon from "../assets/delete_icon.svg";
-import DeleteModal from "../components/DeleteModal"; // ← Import your modal
+import DeleteModal from "../components/DeleteModal";
 import { supabase } from "../supabaseClient";
 
 function ProfilePage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // New: For logout confirmation
+  const [showLogoutModal, setShowLogoutModal] = useState(false); 
   const [userData, setUserData] = useState({
     fullName: "",
     firstName: "",
@@ -22,7 +22,7 @@ function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch current user data from Supabase auth.users on component mount
+  // Fetch current user data: Primarily from public.users 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -34,21 +34,31 @@ function ProfilePage() {
           return;
         }
 
-        // Extract data from auth.users 
+        const { data: profileData, error: profileError } = await supabase
+          .from('users') 
+          .select('first_name, last_name, address, position')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError && profileError.code !== 'PGRST116') { 
+          console.error("Error fetching public.users profile:", profileError);
+        }
+
+
         const metadata = user.user_metadata || {};
-        const fullName = `${metadata.first_name || ""} ${metadata.last_name || ""}`.trim();
+        const fullName = `${profileData?.first_name || metadata.first_name || ""} ${profileData?.last_name || metadata.last_name || ""}`.trim();
         const newUserData = {
           id: user.id,
-          fullName: fullName || user.email,
-          firstName: metadata.first_name || "",
-          lastName: metadata.last_name || "",
+          fullName: fullName || user.email, 
+          firstName: profileData?.first_name || metadata.first_name || "",
+          lastName: profileData?.last_name || metadata.last_name || "",
           email: user.email || "",
-          address: metadata.address || "",
-          position: metadata.position || "",
+          address: profileData?.address || metadata.address || "",
+          position: profileData?.position || metadata.position || "",
         };
         setUserData(newUserData);
 
-        console.log("User  data fetched:", newUserData);
+        console.log("User  data fetched (from public.users with auth fallback):", newUserData);
       } catch (error) {
         console.error("Error fetching user data:", error);
         navigate("/signin");
@@ -60,18 +70,15 @@ function ProfilePage() {
     fetchUserData();
   }, [navigate]);
 
-
   const handleLogoutClick = () => {
     console.log("Logout triggered from sidebar!");
     setShowLogoutModal(true);
   };
 
-
   const handleCloseLogoutModal = () => {
     console.log("Logout modal closed.");
     setShowLogoutModal(false);
   };
-
 
   const handleLogout = async () => {
     console.log("Confirming logout...");
@@ -103,7 +110,6 @@ function ProfilePage() {
     setIsLoading(false); 
   };
 
-  
   const handleConfirmDelete = async () => {
     if (!userData.id) {
       console.error("No user ID found for deletion.");
