@@ -1,4 +1,4 @@
-require('dotenv').config();  // Load .env
+require('dotenv').config();
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -13,11 +13,11 @@ const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-const PORT = process.env.PORT || 3001;  // Use 3001 locally, auto-detects on Vercel
+const PORT = process.env.PORT || 3001;  
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000' }));  // Allow React dev server; restrict in prod
-app.use(express.json());  // Parse JSON bodies
+app.use(cors({ origin: 'http://localhost:3000' }));  
+app.use(express.json());  
 
 
 const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
@@ -32,17 +32,14 @@ app.post('/api/delete-user', async (req, res) => {
       return res.status(400).json({ error: 'userId is required' });
     }
 
-    // Step 1: Delete related data from custom tables (e.g., 'profiles' - adjust table name)
     const { error: profileError } = await supabaseAdmin
-      .from('profiles')  // Replace with your table name (e.g., 'users', 'accounts')
+      .from('profiles')  
       .delete()
-      .eq('id', userId);  // Assumes 'id' column matches auth.users.id (UUID)
+      .eq('id', userId);  
     if (profileError) {
       console.error('Error deleting profile data:', profileError);
-      // Optional: Don't fail the whole deletion if this errors (e.g., no custom data)
     }
 
-    // Step 2: Delete the user from auth.users
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser (userId);
     if (deleteError) {
       throw new Error(`Failed to delete user: ${deleteError.message}`);

@@ -59,7 +59,6 @@ function SignUpPage() {
           data: {
             first_name: firstName,
             last_name: lastName,
-            // No address or position here; we'll handle in public.users insert
           },
         },
       });
@@ -78,33 +77,26 @@ function SignUpPage() {
           last_name: lastName,
           email: email,
           address: "",
-          job_position: "", // Matches your schema's 'job_position' column
-          username: "", // Optional: Set if needed; otherwise omit
-          // Do NOT include 'password' (leave to auth.users; don't insert plain text)
-          // Omit auth-specific columns like encrypted_password, tokens, etc.
-          // If 'instance_id' needs a value, set it (e.g., instance_id: some_uuid); otherwise omit for default null
+          job_position: "",
+          username: "", 
         });
 
         const { error: insertError } = await supabase
           .from("users")
           .insert({
-            id: data.user.id, // Override default gen_random_uuid() to link to auth.users
+            id: data.user.id,
             first_name: firstName,
             last_name: lastName,
             email: email,
             address: "",
-            job_position: "", // Use 'job_position' to match schema (instead of 'position')
-            username: email.split('@')[0], // Optional: Derive username from email (e.g., before @); adjust or omit if not needed
-            // instance_id: null, // Omit if not required; it defaults to null
-            // Do NOT set created_at (let DB handle with default 'now()')
+            job_position: "",
+            username: email.split('@')[0], 
           });
 
         if (insertError) {
           console.error("Error inserting user profile:", insertError);
-          // Optionally notify user, but proceed for now
-          // setErrors({ submit: insertError.message });
         } else {
-          console.log("User  profile inserted successfully!"); // Success log
+          console.log("User  profile inserted successfully!"); 
         }
       }
 
