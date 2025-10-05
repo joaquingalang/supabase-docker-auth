@@ -4,7 +4,7 @@ import GradientBackground from "../components/GradientBackground";
 import SideBar from "../components/SideBar";
 import EditIcon from "../assets/edit_icon.svg";
 import DeleteIcon from "../assets/delete_icon.svg";
-import DeleteModal from "../components/DeleteModal"; // ← Import your modal
+import DeleteModal from "../components/DeleteModal"; 
 import { supabase } from "../supabaseClient";
 
 function ProfilePage() {
@@ -32,11 +32,11 @@ function ProfilePage() {
           return;
         }
 
-        // Extract data from auth.users (email from user.email, others from user_metadata)
+        // Extract data from auth.users 
         const metadata = user.user_metadata || {};
         const fullName = `${metadata.first_name || ""} ${metadata.last_name || ""}`.trim();
         const newUserData = {
-          fullName: fullName || user.email, // Fallback to email if no name
+          fullName: fullName || user.email, 
           firstName: metadata.first_name || "",
           lastName: metadata.last_name || "",
           email: user.email || "",
@@ -67,15 +67,13 @@ function ProfilePage() {
 
   const handleConfirmDelete = async () => {
     try {
-      // Sign out the user (effectively "deletes" the session; for full deletion, you'd need admin API or a profiles table)
-      // Note: Direct auth.users deletion requires service role key (not user-accessible for security)
       const { error } = await supabase.auth.signOut();
 
       if (error) {
         console.error("Error signing out:", error);
       } else {
         console.log("Account session deleted (signed out).");
-        navigate("/signin"); // Redirect to signin after "deletion"
+        navigate("/signin"); 
       }
     } catch (error) {
       console.error("Unexpected error during deletion:", error);
@@ -88,7 +86,7 @@ function ProfilePage() {
     navigate("/update");
   };
 
-  // If still loading, show placeholders (no design change needed, as it uses the same structure)
+
   if (isLoading) {
     return (
       <GradientBackground>
