@@ -38,7 +38,6 @@ function SignUpPage() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    
 
     console.log("Form states before validation:", {
       firstName,
@@ -53,15 +52,14 @@ function SignUpPage() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             first_name: firstName,
             last_name: lastName,
-            address: "",
-            position: "",
+            // No address or position here; we'll handle in public.users insert
           },
         },
       });
@@ -71,9 +69,48 @@ function SignUpPage() {
         return;
       }
 
+      // Insert user profile into public.users table using the new user's ID
+      if (data.user) {
+        console.log("Attempting to insert user with ID:", data.user.id); // Debug log
+        console.log("Insert payload:", {
+          id: data.user.id,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          address: "",
+          job_position: "", // Matches your schema's 'job_position' column
+          username: "", // Optional: Set if needed; otherwise omit
+          // Do NOT include 'password' (leave to auth.users; don't insert plain text)
+          // Omit auth-specific columns like encrypted_password, tokens, etc.
+          // If 'instance_id' needs a value, set it (e.g., instance_id: some_uuid); otherwise omit for default null
+        });
+
+        const { error: insertError } = await supabase
+          .from("users")
+          .insert({
+            id: data.user.id, // Override default gen_random_uuid() to link to auth.users
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            address: "",
+            job_position: "", // Use 'job_position' to match schema (instead of 'position')
+            username: email.split('@')[0], // Optional: Derive username from email (e.g., before @); adjust or omit if not needed
+            // instance_id: null, // Omit if not required; it defaults to null
+            // Do NOT set created_at (let DB handle with default 'now()')
+          });
+
+        if (insertError) {
+          console.error("Error inserting user profile:", insertError);
+          // Optionally notify user, but proceed for now
+          // setErrors({ submit: insertError.message });
+        } else {
+          console.log("User  profile inserted successfully!"); // Success log
+        }
+      }
+
       setTimeout(() => {
         navigate("/signin");
-      }, 1500); 
+      }, 1500);
     } catch (error) {
       console.error("Unexpected error:", error);
       setErrors({ submit: "An unexpected error occurred. Please try again." });
