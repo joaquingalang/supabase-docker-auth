@@ -1,11 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 import GradientBackground from "../components/GradientBackground";
 import { validateSignupForm } from "../components/Validation";
 import { supabase } from "../supabaseClient";
+import { supabase } from "../supabaseClient";
 
 function SignUpPage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -30,6 +40,7 @@ function SignUpPage() {
     setErrors({});
     if (!validateForm()) return;
 
+    setIsLoading(true);
     setIsLoading(true);
 
     try {
@@ -133,6 +144,21 @@ function SignUpPage() {
       </div>
     </GradientBackground>
   );
+            <p className="self-center text-[#715D6D] italic mb-7">
+              Already have an account?{" "}
+              <span
+                className="text-[#FF97E0] font-semibold not-italic cursor-pointer"
+                onClick={() => navigate("/signin")}
+              >
+                Log in
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </GradientBackground>
+  );
 }
 
 export default SignUpPage;
+
